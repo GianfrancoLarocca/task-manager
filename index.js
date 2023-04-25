@@ -1,3 +1,34 @@
+const placeholderData = [
+    {
+      id: 0,
+      name: "In Coda",
+      tasks: [
+        { id: 0, name: "Rispondere alle email" },
+        { id: 1, name: "Allenare gambe" },
+        { id: 2, name: "Ricaricare credito telefono" },
+        { id: 3, name: "Prenotare visita dentista" },
+      ],
+    },
+    {
+      id: 1,
+      name: "Aperto",
+      tasks: [],
+    },
+    {
+      id: 2,
+      name: "In Revisione",
+      tasks: [],
+    },
+    {
+      id: 3,
+      name: "Completato",
+      tasks: [],
+    },
+];
+
+generaTask();
+
+
 const tasks = document.querySelectorAll(".task");
 const colonne = document.querySelectorAll(".colonna");
 
@@ -48,4 +79,19 @@ function drop(){
     console.log("drop");
 
     this.append(dragItem);
+}
+
+function generaTask(){
+    placeholderData.forEach((colonna) => {
+        const targetColonna = document.querySelector(`[data-column="${colonna.id}"]`);
+        colonna.tasks.forEach((task) => {
+            const element = document.createElement("div");
+            element.className = "task p-4 rounded-xl shadow-xl bg-white";
+            element.setAttribute("draggable", true);
+            element.setAttribute("data-task", task.id);
+            const text = document.createTextNode(task.name);
+            element.appendChild(text);
+            targetColonna.appendChild(element);
+        });
+    });
 }
