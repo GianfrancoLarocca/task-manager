@@ -26,6 +26,8 @@ const placeholderData = [
     },
 ];
 
+let data = localStorage.getItem("data") ? JSON.parse(localStorage.getItem("data")) : placeholderData
+
 generaTask();
 
 
@@ -33,18 +35,30 @@ const tasks = document.querySelectorAll(".task");
 const colonne = document.querySelectorAll(".colonna");
 
 let dragItem = null;
+let dragData = null;
 
 tasks.forEach(task =>{
     task.addEventListener("dragstart", dragStart);
     task.addEventListener("dragend", dragEnd);
-})
+});
 
 function dragStart(){
     console.log("start");
 
     setTimeout(() => this.classList.add("hidden"), 0);
     dragItem = this;
-    console.log(dragItem);
+
+    const indexColonna = data.findIndex((colonna) => {
+        return colonna.id == this.parentElement.getAttribute("data-column");
+    });
+
+    const indexTask = data[indexColonna].tasks.findIndex((task) => {
+        return task.id == this.getAttribute("data-task");
+    });
+
+    dragData = data[indexColonna].tasks.splice(indexTask, 1)[0];
+    localStorage.setItem("data", JSON.stringify(data));
+
 }
 
 function dragEnd(){
@@ -52,6 +66,10 @@ function dragEnd(){
 
     this.classList.remove("hidden");
     dragItem = null;
+
+    data[this.parentElement.getAttribute("data-column")].tasks.push(dragData);
+    console.log(data);
+    localStorage.setItem("data", JSON.stringify(data));
 }
 
 colonne.forEach(col => {
@@ -82,7 +100,7 @@ function drop(){
 }
 
 function generaTask(){
-    placeholderData.forEach((colonna) => {
+    data.forEach((colonna) => {
         const targetColonna = document.querySelector(`[data-column="${colonna.id}"]`);
         colonna.tasks.forEach((task) => {
             const element = document.createElement("div");
